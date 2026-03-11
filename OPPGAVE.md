@@ -59,6 +59,8 @@ Kardinalitet:
 - Et forum kan ha mange eller ingen kommentarer, en kommentar kan kun være knyttet til et forum.
 - En kommentar kan ha mange eller ingen svar, men et svar kan kun være knyttet til en kommentar.
 
+![erDiagram](assets/Del1_Konseptuell_Datamodell.png)
+
 ## Del 2: Logisk Skjema (Tabellstruktur)
 
 **Oppgave:** Oversett den konseptuelle modellen til en logisk tabellstruktur. Spesifiser tabellnavn, attributter (kolonner), datatyper, primærnøkler (PK) og fremmednøkler (FK). Tegn et utvidet ER-diagram med [mermaid.live](https://mermaid.live/) eller eventuelt på papir.
