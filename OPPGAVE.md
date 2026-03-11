@@ -65,14 +65,70 @@ Kardinalitet:
 
 **Oppgave:** Oversett den konseptuelle modellen til en logisk tabellstruktur. Spesifiser tabellnavn, attributter (kolonner), datatyper, primærnøkler (PK) og fremmednøkler (FK). Tegn et utvidet ER-diagram med [mermaid.live](https://mermaid.live/) eller eventuelt på papir.
 
-
 **Ditt svar:***
+erDiagram
+    USER {
+        varchar(40) username PK
+        varchar(40) password
+    }
+    STUDENT {
+        varchar(40) username PK, FK
+        varchar(40) firstname        
+        varchar(40) lastname
+    }
+    TEACHER {        
+    varchar(40) username PK, FK
+        varchar(40) firstname        
+        varchar(40) lastname        
+    }    
+    GROUP {
+        int group_id PK
+    }
+    CLASSROOM {
+        int classroom_id PK
+        varchar(40) classroom_name
+        varchar(40) teacher_username FK
+    }
+    MESSAGE {
+        int message_number PK
+        int classroom_id FK
+        varchar(200) message_text
+        varchar(40) teacher_username FK
+    }
+    FORUM {
+        int forum_number PK
+        int classroom_id FK
+        TIMESTAMP created
+        varchar(50) forum_title
+        varchar(200) forum_text
+    }
+    COMMENT {
+        int comment_number PK
+        int forum_number FK
+        TIMESTAMP posted
+        varchar(50) comment_title
+        varchar(200) comment_text
+        varchar(40) username FK
 
+    }
+    ANSWER {
+        int answer_number PK
+        int comment_number FK
+        TIMESTAMP posted
+        varchar(50) answer_title
+        varchar(200) answer_text
+        varchar(40) username FK
+    }
+
+Her er det også en koblingstabbel mellom mange til maneg relasjonen mellonm group og classroom:
+    group_classroom_access {
+        int group_id PK, FK
+        int classroom_id PK, FK
+    }
 
 ## Del 3: Datadefinisjon (DDL) og Mock-Data
 
 **Oppgave:** Skriv SQL-setninger for å opprette tabellstrukturen (DDL - Data Definition Language) og sett inn realistiske mock-data for å simulere bruk av systemet.
-
 
 **Ditt svar:***
 
