@@ -28,7 +28,36 @@ I et klasserom kan studentene lese beskjeder fra læreren. Hvert klasserom har o
 **Oppgave:** Beskriv en konseptuell datamodell (med tekst eller ER-diagram) for systemet. Modellen skal kun inneholde entiteter, som du har valgt, og forholdene mellom dem, med kardinalitet. Du trenger ikke spesifisere attributter i denne delen.
 
 **Ditt svar:***
+Entiteter:
+    STUDENT
+    TEACHER
+    USER
+    CLASSROOM
+    GROUP
+    MESSAGE
+    FORUM
+    COMMENT
+    ANSWER
 
+Kardinalitet:
+    USER ||--o| STUDENT : is_a
+    USER ||--o| TEACHER : is_a
+    USER o{--o{ GROUP : member_of
+    GROUP o{--o{ CLASSROOM : access_to
+    TEACHER ||--o{ CLASSROOM : responsible_for     
+    CLASSROOM ||--o{ MESSAGE : contains
+    CLASSROOM ||--o{ FORUM : contains
+    FORUM ||--o{ COMMENT : contains
+    COMMENT ||--o{ ANSWER : contains
+
+- En student må være én bruker; en bruker kan være 0 eller 1 student.
+- En lærer må være én bruker; en bruker kan være 0 eller 1 lærer.
+- En bruker kan være knytett til en eller flere grupper, en gruppe kan ha ingen eller mange brukere.
+- Mange grupper kan ha tilgang til mange klasserom, mange klasserom kan ha mange grupper.
+- Et klasserom må ha en ansvarlig lærer, en lærer kan være snavrlig for 0 eller mange klasserom
+- et klasserom kan ha o eller mange meldinger, en melding kan kun være knytett til et klasserom. Det samme gjheøder forum.
+- Et forum kan ha mange eller ingen kommentarer, en kommentar kan kun være knyttet til et forum.
+- En kommentar kan ha mange eller ingen svar, men et svar kan kun være knyttet til en kommentar.
 
 ## Del 2: Logisk Skjema (Tabellstruktur)
 
