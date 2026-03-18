@@ -134,6 +134,7 @@ Her er det også en koblingstabbel mellom mange til maneg relasjonen mellonm gro
 
 **Ditt svar:***
 CREATE TABLE IF NOT EXISTS user (
+    user_id SERIAL UNIQUE
     username VARCHAR(40) PRIMARY KEY,
     password VARCHAR(40) NOT NULL
 );
@@ -154,6 +155,13 @@ CREATE TABLE IF NOT EXISTS groups (
     group_id SERIAL PRIMARY KEY
 );
 
+CREATE TABLE IF NOT EXISTS student_group (
+    username VARCHAR(40) NOT NULL REFERENCES student(username),
+    group_id INT NOT NULL REFERENCES groups(group_id),
+    PRIMARY KEY (username, group_id)
+);
+
+
 CREATE TABLE IF NOT EXISTS classroom (
     classroom_id SERIAL PRIMARY KEY,
     classroom_name VARCHAR(40) UNIQUE,
@@ -173,7 +181,8 @@ CREATE TABLE IF NOT EXISTS forum (
     classroom_id INT NOT NULL REFERENCES classroom(classroom_id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     forum_title VARCHAR(50) NOT NULL,
-    forum_text TEXT NOT NULL
+    forum_text TEXT NOT NULL,
+    username VARCHAR(40) NOT NULL REFERENCES user(username)
 );
 
 CREATE TABLE IF NOT EXISTS comment (
@@ -211,7 +220,15 @@ VALUES ('alice01', 'Alice', 'Anderson'), ('bert98', 'Bert', 'Ernie');
 INSERT INTO teacher (username, firstname, lastname)
 VALUE ('teacher101', 'Leonora', 'Carlson');
 
-INSERT INTO groups (group_id) VALUES (1), (2);
+INSERT INTO groups (group_id) VALUES (1), (2), (3);
+
+INSERT INTO student_group (username, group_id)
+VALUES 
+    ('alice01', 1),
+    ('bert98', 1),
+    ('bert98', 2),
+    ('alice01', 2),
+    ('alice01', 3);
 
 INSERT INTO classroom (classroom_name, teacher_username)
 VALUES ('Math101', 'teacher101'),
@@ -223,8 +240,8 @@ VALUES (1, 1), (2, 2);
 INSERT INTO message (classroom_id, message_text, teacher_username)
 VALUES (1, 'Welcome to Math101', 'teacher101');
 
-INSERT INTO forum (classroom_id, forum_title, forum_text)
-VALUES (1, 'Introductions', 'Say hello to your classmates!');
+INSERT INTO forum (classroom_id, forum_title, forum_text, username)
+VALUES (1, 'Introductions', 'Say hello to your classmates!', alice01);
 
 INSERT INTO comment (forum_number, comment_title, comment_text, username)
 VALUES (1, 'Hi everyone', 'Excited to be here!', 'alice01');
@@ -244,8 +261,8 @@ VALUES (1, 'Welcome!', 'Glad to have you here!', 'teacher101');
     > 
 
 *   **SQL:**
-    ```sql
-    
+    ```
+    select message_text, teacher_username, classroom_id from message where classroom_id = 1 order by created_at desc limit 3;
     ```
 
 ### 2. Vis en hel diskusjonstråd startet av en spesifikk student (f.eks. avsender_id = 2).
@@ -256,9 +273,25 @@ VALUES (1, 'Welcome!', 'Glad to have you here!', 'teacher101');
 *   **SQL (med `WITH RECURSIVE`):**
 
     Du kan vente med denne oppgaven til vi har gått gjennom avanserte SQL-spørringer (tips: må bruke en rekursiv konstruksjon `WITH RECURSIVE diskusjonstraad AS (..) SELECT FROM diskusjonstraad ...`)
-    ```sql
+    ```
+    with recursive diskusjonstraad as (
+        SELECT forum_number AS id, NULL AS parent_id, forum_title AS title, forum_text AS text, username, 1 AS level 
+        FROM forum where username = 'alice01'
+
+        UNION ALL
+        SELECT c.comment_number AS id, c.forum_number AS parent_id, c.comment_title AS title, c.comment_text AS text, c.username, d.level + 1 AS level
+        FROM comment c 
+        JOIN diskusjonstraad d ON c.forum_number = d.id
+
+        UNION ALL
+        SELECT a.answer_number AS id, a.comment_number AS parent_id, a.answer_title AS title, a.answer_text AS text, a.username, d.level + 1 AS level
+        FROM answer a 
+        JOIN diskusjonstraad d ON a.comment_number = d.id
+    )
+    SELECT * FROM diskusjonstraad order by level; 
     
     ```
+
 
 ### 3. Finn alle studenter i en spesifikk gruppe (f.eks. gruppe_id = 1).
 
@@ -266,7 +299,11 @@ VALUES (1, 'Welcome!', 'Glad to have you here!', 'teacher101');
     > 
 
 *   **SQL:**
-    ```sql
+    ```
+    SELECT g.username, s.firstname, s.lastname 
+    FROM student_group g
+    JOIN students s ON s.username = g.username 
+    WHERE group_id. = 1;
     
     ```
 
@@ -276,7 +313,8 @@ VALUES (1, 'Welcome!', 'Glad to have you here!', 'teacher101');
     > 
 
 *   **SQL:**
-    ```sql
+    ```
+    SELECT COUNT(group_id) FROM groups;
     
     ```
 
