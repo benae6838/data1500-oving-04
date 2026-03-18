@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS group_classroom_access (
     PRIMARY KEY (group_id, classroom_id)
 );
 
-------------------------------------- MOCK-DATA ---------------------------------------------
+------------------------------------- TEST-DATA ---------------------------------------------
 
 INSERT INTO user (username, password)
 VALUES ('alice01', 'password123'), ('bert98', '63949472'), ('teacher101', 'userpassowrd');
